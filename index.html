@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>My JavaScript Experiments</title>
+	<meta charset="utf-8">
+</head>
+
+<body>
+
+<h1>About this page:</h1>
+
+<p>This page speeds smily up a bit and also places him above or below the other elements. 
+(Look closely as smily cross the text.  Sometimes he is above the text and sometimes he is below.)</p>
+
+<hr/>
+<div id="info_text">Info text goes here</div>
+<img id="smily_id" src="smily2.gif">
+<hr/>
+
+<h2>What should we learn:</h2>
+<li>Movement is more "natural" if it occurs in smaller quicker steps.</li>
+<li>How to place element in front or behind other element by setting the zIndex style.</li>
+</ul>
+<hr/>
+
+<script type="text/javascript">
+// find our HTML tags
+var se = document.getElementById("smily_id");
+var ie = document.getElementById("info_text");
+
+// timer variables
+var interval_timer;
+var count = 0;
+
+// inititial speed
+var x_speed = 3;
+var y_speed = -3;
+
+// current position
+var pos = { 
+  left: se.offsetLeft,
+  top:  se.offsetTop
+};
+
+// set style for absolute position and initial position
+se.style.position = "absolute";
+se.style.left = pos.left + "px";
+se.style.top  = pos.top + "px";
+
+// function the gets called periodicly to move smily around
+function move_smily()
+{
+    var left_max;
+    var top_max;
+
+    // timer maintenance
+    count++;
+
+    if (se)
+    {
+        // calculate new positions
+        pos.left += x_speed;
+        pos.top  += y_speed;
+
+        // find maximum position values to remain in window
+        left_max = se.offsetParent.offsetWidth - se.offsetWidth - 5;
+        top_max  = se.offsetParent.offsetHeight - se.offsetHeight - 5;
+
+        // adjust speed if smily is out of bounds and heading the wrong way
+
+        // do X, left/right
+        if ((pos.left > left_max && x_speed > 0) || (pos.left < 0 && x_speed < 0))
+        {
+            x_speed = -x_speed;
+        }
+
+        // do Y, up/down
+        if ((pos.top > top_max && y_speed > 0) || (pos.top < 0 && y_speed < 0))
+        {
+            y_speed = -y_speed;   
+        }
+
+        // update smily's position
+        se.style.left = pos.left + "px";
+        se.style.top  = pos.top  + "px";
+
+        // 50% of the time, smily should be on top of other stuff, the rest it should be under
+        se.style.zIndex = ((count % 200) < 100) ? "1" : "-1";
+
+        // display info on smily
+        ie.innerHTML = "Smily position (X,Y,z): (" + se.style.left + "," + se.style.top + "," +
+           se.style.zIndex + ")  count: " + count + 
+           "  max(X,Y): (" + left_max + "," + top_max + ")";
+    }
+}
+
+interval_timer = setInterval("move_smily();", 10);
+
+</script>
+
+</body>
+
+</html>
